@@ -6,12 +6,13 @@ std::string quitarComillas(std::string valor)
     return valor;
 }
 
+
 MatrizDatos generarMatrizDatos(std::string archivo)
 {
     std::ifstream archivo_stream;
     archivo_stream.open(archivo);
 
-    std::string linea;
+    std::string linea; 
 
     MatrizDatos datos = MatrizDatos();
 
@@ -34,33 +35,53 @@ MatrizDatos generarMatrizDatos(std::string archivo)
             std::getline(ss, nombre, ';');
 
             fecha = quitarComillas(fecha);
-            //sku = quitarComillas(sku);
-            //cantidad = quitarComillas(cantidad);
+            cantidad = quitarComillas(cantidad);
             precio = quitarComillas(precio);
-            //nombre = quitarComillas(nombre);
 
             try
             {
+
+                ///transformamos los valores a int
                 //int sku_int = stoi(sku);
-                //int cantidad_int = stoi(cantidad);
+                int cantidad_int = stoi(cantidad);
+                //std::cout << "precio : " << precio << std::endl;
                 int precio_int = stoi(precio);
 
-                std::tm fecha_tm = {};
-                std::istringstream ss(fecha);
-                ss.imbue(std::locale("es_CL.utf-8"));
-                ss >> std::get_time(&fecha_tm, "%Y-%m-%d %H:%M:%S");
-                if (ss.fail())
-                {
-                    std::cout << "Fecha erronea " << fecha << std::endl;
-                }
+                int precio_total = cantidad_int * precio_int;
 
-                //datos.insertarLinea(fecha_tm, sku_int, cantidad_int, precio_int, nombre);
-                datos.insertarLinea(fecha_tm, precio_int);
+                if(precio_total > 0)
+                {
+                    ///transformamos la fecha string a time_t
+                    std::tm fecha_tm = {};
+                    std::istringstream ss(fecha);
+                    ss.imbue(std::locale("en_US.utf-8"));
+                    ss >> std::get_time(&fecha_tm, "%Y-%m-%d");
+                    if (ss.fail())
+                    {
+                        //std::cout << "Fecha erronea " << fecha << std::endl;
+                    }
+
+                    time_t fecha_t = mktime(&fecha_tm);
+
+                    ///si la matriz aun no contiene datos, consideramos la fecha actual como la fecha inicial
+                    if (datos.size() == 0)
+                    {
+                        datos.setFechaInicial(fecha_t);
+                    }
+
+                    //std::cout << "leyendo " << fecha << "  " << cantidad << "  " << precio << std::endl;
+
+                    ///insertamos los valores a la matriz
+                    datos.agregarLinea(fecha_t, precio_total);
+                    //datos.insertarLinea(fecha_tm, precio_int);
+                }
             }
             catch (...)
             {
+                /*
                 std::cout << "linea no valida del archivo: " << std::endl
                           << linea << std::endl;
+                */
             }
         }
     }
