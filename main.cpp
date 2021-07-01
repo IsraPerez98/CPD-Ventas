@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     ///generamos una matriz con los datos de los archivos
     MatrizDatos matriz_datos = generarMatrizDatos(archivo);
     
-    int n = matriz_datos.size();
+    int n =matriz_datos.size();
 
     ///datos para hacer analisis estadistico
 
@@ -59,9 +59,11 @@ int main(int argc, char** argv)
         sumatoria_y_log += ventas_log;
         sumatoria_x_cuadrado += std::pow(fecha, 2);
         sumatoria_xy += fecha * ventas;
-        sumatoria_xy_log += fecha * ventas_log;
+        sumatoria_xy_log += fecha * ventas_log; //std::log(fechas*ventas);
+
 
     }
+    //matriz_datos.print();
 
     /// transformamos la fecha inicial al dia en string legible
     char tiempo_str[30];
@@ -70,13 +72,13 @@ int main(int argc, char** argv)
     strftime(tiempo_str, sizeof(tiempo_str), "%Y-%m-%d", tiempo);
 
     /// realizamos la regresion lineal
-    double d_lineal = n*sumatoria_x_cuadrado-sumatoria_x*sumatoria_x;
-    double a_lineal = ((double)(sumatoria_x_cuadrado*sumatoria_y-sumatoria_x*sumatoria_xy))/d_lineal;
-    double b_lineal = (n*sumatoria_xy-sumatoria_x*sumatoria_y)/d_lineal;
+    double d_lineal = n*sumatoria_x_cuadrado - sumatoria_x*sumatoria_x;
+    double b_lineal = (n*sumatoria_xy - sumatoria_x*sumatoria_y) / d_lineal;
+    double a_lineal = ((double)(sumatoria_x_cuadrado*sumatoria_y - sumatoria_x*sumatoria_xy))/d_lineal;
 
     std::cout << std::fixed;
-
-    std::cout << "Funcion Lineal: Ventas (por dia) = " << a_lineal << " * (Dias desde " << tiempo_str << ")  + " << b_lineal << std::endl;
+    std::cout <<" Días desde "<<tiempo_str<<" = x"<< std::endl;
+    std::cout << "Regresión Lineal: Ventas[dinero] (por dia) = " << a_lineal << " * x   + " << b_lineal << std::endl;
 
     ///ajuste exponencial
     /// calculamos la pendiente
@@ -85,8 +87,10 @@ int main(int argc, char** argv)
     double intercepto_exp = ((long double)(sumatoria_x_cuadrado*sumatoria_y_log-sumatoria_x*sumatoria_xy_log))/(sumatoria_x_cuadrado*n-sumatoria_x*sumatoria_x); 
     double c_exp = pow(2.71828,intercepto_exp);
     
+    
+    
     ///se imprime la formula exponencial
-    std::cout << "Funcion Exponencial: Ventas (por dia) = " << c_exp << " * e ^ ( " << pendiente_exp << " * (Dias desde " << tiempo_str << ") )" << std::endl;
+    std::cout << "Regresión Exponencial: Ventas[dinero] (por dia) = " << c_exp << " * e ^ ( " << pendiente_exp << " * x)" << std::endl;
 
     return 0;
 }

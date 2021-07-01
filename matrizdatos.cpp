@@ -24,7 +24,7 @@ void MatrizDatos::agregarLinea(std::time_t fecha, int ventas)
 
     /**
     * si la fecha ya esta en la matriz, sumamos las ventas
-    * en caso contrario, insertamos la fecha y las ventas a una posision nueva
+    * en caso contrario, insertamos la fecha y las ventas a una posicion nueva
     */
     if(ultimo >= 0 && dia == this->dia[ultimo]) 
     {
